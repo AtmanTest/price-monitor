@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - PricePulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #141420;
+            --bg-card-hover: #1a1a2e;
+            --border: #252540;
+            --text: #e0e0f0;
+            --text-dim: #8888aa;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.3);
+            --green: #00e676;
+            --red: #ff5252;
+            --orange: #ff9100;
+            --radius: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+        }
+        nav .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        nav .logo span { color: var(--text); }
+        nav .nav-links { display: flex; gap: 1rem; align-items: center; }
+        nav .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+        nav .nav-links a:hover { color: var(--text); }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-family: inherit;
+            background: transparent;
+            color: var(--text);
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-1px); }
+        .btn-outline { border: 1px solid var(--border); }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-danger { color: var(--red); border: 1px solid var(--red); }
+        .btn-danger:hover { background: var(--red); color: white; }
+        .btn-small { padding: 6px 12px; font-size: 0.8rem; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .page-header h1 { font-size: 2rem; font-weight: 700; }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        tr:hover td { background: rgba(108, 92, 231, 0.05); }
+        td a { color: var(--accent); text-decoration: none; }
+        td a:hover { text-decoration: underline; }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(0,230,118,0.15); color: var(--green); }
+        .badge-warning { background: rgba(255,145,0,0.15); color: var(--orange); }
+        .badge-danger { background: rgba(255,82,82,0.15); color: var(--red); }
+        .badge-info { background: rgba(108,92,231,0.15); color: var(--accent); }
+        .trend-up { color: var(--red); }
+        .trend-down { color: var(--green); }
+        .trend-neutral { color: var(--text-dim); }
+        .price-tag {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-dim);
+        }
+        .empty-state .icon { font-size: 4rem; margin-bottom: 1rem; }
+        .empty-state h3 { font-size: 1.3rem; margin-bottom: 0.5rem; color: var(--text); }
+        .empty-state p { margin-bottom: 1.5rem; }
+
+        /* Actions row */
+        .actions-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        form { display: inline; }
+
+        @media (max-width: 768px) {
+            nav { padding: 0 1rem; }
+            .container { padding: 1rem; }
+            .page-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">⚡ Price<span>Pulse</span></a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/add" class="btn btn-primary btn-small">+ Add Product</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <div>
+                <h1>Dashboard</h1>
+                <p style="color: var(--text-dim); margin-top: 0.25rem;">{{ products|length }} products tracked</p>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <form action="/check-now" method="POST">
+                    <button type="submit" class="btn btn-outline btn-small">🔄 Check All Now</button>
+                </form>
+                <a href="/add" class="btn btn-primary">+ Add Product</a>
+            </div>
+        </div>
+
+        {% if products %}
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Store</th>
+                        <th>Current Price</th>
+                        <th>Trend</th>
+                        <th>Alerts</th>
+                        <th>Last Checked</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for p in products %}
+                    <tr>
+                        <td>
+                            <a href="/product/{{ p.id }}" style="font-weight: 600;">{{ p.name[:80] }}{% if p.name|length > 80 %}...{% endif %}</a>
+                        </td>
+                        <td><span class="badge badge-info">{{ p.store }}</span></td>
+                        <td>
+                            {% if p.current_price %}
+                            <span class="price-tag">{{ "%.2f"|format(p.current_price) }} {{ p.current_currency }}</span>
+                            {% else %}
+                            <span style="color: var(--text-dim);">N/A</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if p.trend == 'down' %}
+                            <span class="trend-down">▼ {{ "%.2f%%"|format(((p.current_price - p.first_price) / p.first_price * 100)) if p.first_price and p.current_price else '' }}</span>
+                            {% elif p.trend == 'up' %}
+                            <span class="trend-up">▲ {{ "%.2f%%"|format(((p.current_price - p.first_price) / p.first_price * 100)) if p.first_price and p.current_price else '' }}</span>
+                            {% else %}
+                            <span class="trend-neutral">─</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if p.active_alerts > 0 %}
+                            <span class="badge badge-warning">{{ p.active_alerts }} alert(s)</span>
+                            {% else %}
+                            <span style="color: var(--text-dim);">No alerts</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size: 0.85rem; color: var(--text-dim);">
+                            {% if p.last_checked %}
+                            {{ p.last_checked[:19] }}
+                            {% else %}
+                            Never
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="actions-row">
+                                <form action="/check/{{ p.id }}" method="POST">
+                                    <button type="submit" class="btn btn-outline btn-small" title="Check now">🔄</button>
+                                </form>
+                                <a href="/product/{{ p.id }}" class="btn btn-outline btn-small">📊</a>
+                                <form action="/delete/{{ p.id }}" method="POST" onsubmit="return confirm('Delete {{ p.name|e }}?')">
+                                    <button type="submit" class="btn btn-danger btn-small">✕</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">📦</div>
+            <h3>No products tracked yet</h3>
+            <p>Start monitoring prices by adding your first product URL.</p>
+            <a href="/add" class="btn btn-primary">+ Add Your First Product</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
