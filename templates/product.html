@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ product.name[:60] }} - PricePulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #141420;
+            --bg-card-hover: #1a1a2e;
+            --border: #252540;
+            --text: #e0e0f0;
+            --text-dim: #8888aa;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.3);
+            --green: #00e676;
+            --red: #ff5252;
+            --orange: #ff9100;
+            --radius: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .logo { font-size: 1.4rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+        nav .logo span { color: var(--text); }
+        nav .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        nav .nav-links a { color: var(--text-dim); text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: color 0.2s; }
+        nav .nav-links a:hover { color: var(--text); }
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 10px 20px; border-radius: 8px; border: none;
+            cursor: pointer; font-weight: 600; font-size: 0.9rem;
+            text-decoration: none; transition: all 0.2s; font-family: inherit;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-1px); }
+        .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
+        .btn-danger:hover { background: var(--red); color: white; }
+        .btn-small { padding: 6px 12px; font-size: 0.8rem; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .breadcrumb { margin-bottom: 1.5rem; font-size: 0.85rem; }
+        .breadcrumb a { color: var(--text-dim); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--text); }
+        .breadcrumb span { color: var(--text-dim); }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1.5rem; }
+        .product-header { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: 1rem; }
+        .product-header h1 { font-size: 1.5rem; font-weight: 700; }
+        .badge {
+            display: inline-block; padding: 4px 10px; border-radius: 20px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+        .badge-info { background: rgba(108,92,231,0.15); color: var(--accent); }
+        .badge-success { background: rgba(0,230,118,0.15); color: var(--green); }
+        .badge-warning { background: rgba(255,145,0,0.15); color: var(--orange); }
+        .badge-danger { background: rgba(255,82,82,0.15); color: var(--red); }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.25rem;
+            text-align: center;
+        }
+        .stat-box .value { font-size: 1.5rem; font-weight: 700; }
+        .stat-box .label { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.25rem; }
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .chart-container h3 { margin-bottom: 1rem; }
+        canvas { width: 100% !important; max-height: 350px; }
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-dim);
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+        th { color: var(--text-dim); font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
+        tr:hover td { background: rgba(108, 92, 231, 0.05); }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input {
+            width: 100%; padding: 10px 14px; background: var(--bg);
+            border: 1px solid var(--border); border-radius: 8px;
+            color: var(--text); font-family: inherit; font-size: 1rem;
+        }
+        .form-group input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+        .inline-form { display: flex; gap: 0.5rem; align-items: end; }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 1rem; }
+        @media (max-width: 768px) {
+            nav { padding: 0 1rem; }
+            .container { padding: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">⚡ Price<span>Pulse</span></a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/add" class="btn btn-primary btn-small">+ Add Product</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/dashboard">Dashboard</a> <span>/</span> {{ product.name[:80] }}
+        </div>
+
+        <!-- Product Header -->
+        <div class="card product-header">
+            <div>
+                <h1>{{ product.name[:120] }}{% if product.name|length > 120 %}...{% endif %}</h1>
+                <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                    <span class="badge badge-info">{{ product.store }}</span>
+                    <a href="{{ product.url }}" target="_blank" style="color: var(--text-dim); font-size: 0.85rem; text-decoration: none;">🔗 View on store</a>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+                <form action="/check/{{ product.id }}" method="POST">
+                    <button type="submit" class="btn btn-outline btn-small">🔄 Check Now</button>
+                </form>
+                <form action="/delete/{{ product.id }}" method="POST" onsubmit="return confirm('Delete this product?')">
+                    <button type="submit" class="btn btn-danger btn-small">Delete</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        {% if stats %}
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="value">{{ "%.2f"|format(stats.current) }} €</div>
+                <div class="label">Current Price</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">{{ "%.2f"|format(stats.min) }} €</div>
+                <div class="label">Lowest Price</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">{{ "%.2f"|format(stats.max) }} €</div>
+                <div class="label">Highest Price</div>
+            </div>
+            <div class="stat-box">
+                <div class="value">{{ "%.2f"|format(stats.avg) }} €</div>
+                <div class="label">Average Price</div>
+            </div>
+            {% if stats.change is defined %}
+            <div class="stat-box">
+                <div class="value" style="color: {% if stats.change < 0 %}var(--green){% elif stats.change > 0 %}var(--red){% else %}var(--text){% endif %};">
+                    {{ "%+.2f"|format(stats.change) }} €
+                </div>
+                <div class="label">Total Change ({{ "%+.1f"|format(stats.change_pct) }}%)</div>
+            </div>
+            {% endif %}
+            <div class="stat-box">
+                <div class="value">{{ stats.count }}</div>
+                <div class="label">Price Checks</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Price Chart -->
+        <div class="chart-container">
+            <h3>Price History</h3>
+            {% if chart_data != '[]' %}
+            <canvas id="priceChart"></canvas>
+            {% else %}
+            <div class="no-data">📊 No price data yet. Click "Check Now" to fetch the current price.</div>
+            {% endif %}
+        </div>
+
+        <!-- Two columns: Price History Table + Alerts -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            <!-- Price History Table -->
+            <div class="card">
+                <h3 class="section-title">Recent Prices</h3>
+                <table id="priceTable">
+                    <thead>
+                        <tr><th>Date</th><th>Price</th><th>Currency</th></tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div id="noPrices" class="no-data" style="display:none;">No prices recorded yet.</div>
+            </div>
+
+            <!-- Alerts Section -->
+            <div>
+                <div class="card">
+                    <h3 class="section-title">Set Price Alert</h3>
+                    <form action="/alert/{{ product.id }}" method="POST">
+                        <div class="inline-form">
+                            <div class="form-group" style="flex:1; margin: 0;">
+                                <label>Target Price (€)</label>
+                                <input type="number" name="threshold" step="0.01" min="0.01" placeholder="e.g. 49.99" required>
+                            </div>
+                            <div class="form-group" style="margin: 0;">
+                                <label>&nbsp;</label>
+                                <input type="hidden" name="alert_type" value="price_drop">
+                                <button type="submit" class="btn btn-primary">Set Alert 🔔</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3 class="section-title">Active Alerts ({{ alerts|selectattr('triggered_at', 'none')|list|length }})</h3>
+                    {% set has_active = false %}
+                    {% for alert in alerts %}
+                    {% if alert.enabled and not alert.triggered_at %}
+                    {% set has_active = true %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+                        <div>
+                            <strong>Drop below {{ "%.2f"|format(alert.threshold) }} €</strong>
+                            <div style="font-size: 0.8rem; color: var(--text-dim);">Created {{ alert.created_at[:19] }}</div>
+                        </div>
+                        <form action="/alert/delete/{{ alert.id }}" method="POST">
+                            <button type="submit" class="btn btn-danger btn-small">Remove</button>
+                        </form>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    {% if not has_active %}
+                    <p style="color: var(--text-dim);">No active alerts. Set a target price above.</p>
+                    {% endif %}
+                </div>
+
+                {% set triggered = alerts|selectattr('triggered_at', 'defined')|selectattr('triggered_at', 'ne', none)|list %}
+                {% if triggered %}
+                <div class="card">
+                    <h3 class="section-title">Triggered Alerts</h3>
+                    {% for alert in triggered %}
+                    <div style="padding: 8px 0; border-bottom: 1px solid var(--border);">
+                        <span class="badge badge-success">✓ Triggered</span>
+                        <strong> Drop below {{ "%.2f"|format(alert.threshold) }} €</strong>
+                        <div style="font-size: 0.8rem; color: var(--text-dim);">Triggered: {{ alert.triggered_at[:19] }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% if chart_data != '[]' %}
+    <script>
+    // Price chart - Canvas based
+    (function() {
+        var rawData = {{ chart_data|safe }};
+        if (!rawData || rawData.length === 0) return;
+
+        var canvas = document.getElementById('priceChart');
+        if (!canvas) return;
+        var ctx = canvas.getContext('2d');
+        var container = canvas.parentElement;
+
+        // Set canvas size
+        function resize() {
+            canvas.width = container.clientWidth - 48;
+            canvas.height = 300;
+        }
+        resize();
+        window.addEventListener('resize', function() {
+            resize();
+            draw();
+        });
+
+        var prices = rawData.map(function(d) { return d.price; });
+        var dates = rawData.map(function(d) { return d.date; });
+        var minPrice = Math.min.apply(null, prices) * 0.95;
+        var maxPrice = Math.max.apply(null, prices) * 1.05;
+        var range = maxPrice - minPrice || 1;
+
+        function draw() {
+            var W = canvas.width, H = canvas.height;
+            ctx.clearRect(0, 0, W, H);
+
+            var pad = { top: 30, right: 40, bottom: 50, left: 60 };
+            var pw = W - pad.left - pad.right;
+            var ph = H - pad.top - pad.bottom;
+
+            // Grid
+            ctx.strokeStyle = '#252540';
+            ctx.lineWidth = 0.5;
+            var gridLines = 5;
+            for (var i = 0; i <= gridLines; i++) {
+                var y = pad.top + (ph / gridLines) * i;
+                ctx.beginPath();
+                ctx.moveTo(pad.left, y);
+                ctx.lineTo(W - pad.right, y);
+                ctx.stroke();
+
+                // Y axis labels
+                var val = maxPrice - (range / gridLines) * i;
+                ctx.fillStyle = '#8888aa';
+                ctx.font = '11px Inter, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(val.toFixed(0) + ' €', pad.left - 8, y + 4);
+            }
+
+            // X axis labels (show ~5 evenly spaced)
+            var xLabels = 5;
+            for (var i = 0; i <= xLabels; i++) {
+                var idx = Math.floor((dates.length - 1) * (i / xLabels));
+                if (idx >= dates.length) idx = dates.length - 1;
+                var x = pad.left + (pw / (dates.length - 1 || 1)) * idx;
+                var d = dates[idx];
+                var label = d ? d.slice(0, 10) : '';
+                ctx.fillStyle = '#8888aa';
+                ctx.font = '10px Inter, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(label, x, H - pad.bottom + 18);
+            }
+
+            // Draw line
+            ctx.beginPath();
+            ctx.strokeStyle = '#6c5ce7';
+            ctx.lineWidth = 2.5;
+            ctx.lineJoin = 'round';
+            for (var i = 0; i < prices.length; i++) {
+                var x = pad.left + (pw / (dates.length - 1 || 1)) * i;
+                var y = pad.top + ph - ((prices[i] - minPrice) / range) * ph;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Gradient fill
+            var lastX = pad.left + pw;
+            var gradient = ctx.createLinearGradient(0, pad.top, 0, H - pad.bottom);
+            gradient.addColorStop(0, 'rgba(108, 92, 231, 0.25)');
+            gradient.addColorStop(1, 'rgba(108, 92, 231, 0.0)');
+            ctx.lineTo(lastX, H - pad.bottom);
+            ctx.lineTo(pad.left, H - pad.bottom);
+            ctx.closePath();
+            ctx.fillStyle = gradient;
+            ctx.fill();
+
+            // Redraw line on top
+            ctx.beginPath();
+            ctx.strokeStyle = '#6c5ce7';
+            ctx.lineWidth = 2.5;
+            for (var i = 0; i < prices.length; i++) {
+                var x = pad.left + (pw / (dates.length - 1 || 1)) * i;
+                var y = pad.top + ph - ((prices[i] - minPrice) / range) * ph;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+
+            // Dots
+            for (var i = 0; i < prices.length; i++) {
+                var x = pad.left + (pw / (dates.length - 1 || 1)) * i;
+                var y = pad.top + ph - ((prices[i] - minPrice) / range) * ph;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = '#6c5ce7';
+                ctx.fill();
+                ctx.strokeStyle = '#141420';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            // Current price label
+            if (prices.length > 0) {
+                var lx = pad.left + pw;
+                var ly = pad.top + ph - ((prices[prices.length-1] - minPrice) / range) * ph;
+                ctx.fillStyle = '#e0e0f0';
+                ctx.font = 'bold 12px Inter, sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(prices[prices.length-1].toFixed(2) + ' €', lx + 6, ly + 4);
+            }
+        }
+
+        draw();
+
+        // Populate price table
+        var tbody = document.querySelector('#priceTable tbody');
+        var noPricesDiv = document.getElementById('noPrices');
+        if (rawData.length === 0) {
+            noPricesDiv.style.display = 'block';
+            document.querySelector('#priceTable').style.display = 'none';
+        } else {
+            // Show last 15 prices, newest first
+            var recent = rawData.slice(-15).reverse();
+            recent.forEach(function(p) {
+                var tr = document.createElement('tr');
+                tr.innerHTML = '<td style="font-size:0.85rem;">' + (p.date ? p.date.slice(0, 19) : 'N/A') + '</td>' +
+                              '<td style="font-weight:600;">' + p.price.toFixed(2) + '</td>' +
+                              '<td>' + p.currency + '</td>';
+                tbody.appendChild(tr);
+            });
+        }
+    })();
+    </script>
+    {% endif %}
+</body>
+</html>
