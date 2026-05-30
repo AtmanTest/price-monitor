@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - PricePulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-card: #141420;
+            --border: #252540;
+            --text: #e0e0f0;
+            --text-dim: #8888aa;
+            --accent: #6c5ce7;
+            --accent-glow: rgba(108, 92, 231, 0.3);
+            --green: #00e676;
+            --red: #ff5252;
+            --radius: 12px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 64px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        nav .logo { font-size: 1.4rem; font-weight: 700; color: var(--accent); text-decoration: none; }
+        nav .logo span { color: var(--text); }
+        nav .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        nav .nav-links a { color: var(--text-dim); text-decoration: none; font-weight: 500; font-size: 0.9rem; }
+        nav .nav-links a:hover { color: var(--text); }
+        .container { max-width: 700px; margin: 0 auto; padding: 2rem; }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; }
+        h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .subtitle { color: var(--text-dim); margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 0.5rem; font-size: 0.9rem; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px 16px;
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text);
+            font-family: inherit; font-size: 1rem;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+        .btn {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 12px 24px; border-radius: 8px; border: none;
+            cursor: pointer; font-weight: 600; font-size: 1rem;
+            text-decoration: none; transition: all 0.2s; font-family: inherit;
+        }
+        .btn-primary { background: var(--accent); color: white; width: 100%; justify-content: center; }
+        .btn-primary:hover { box-shadow: 0 0 20px var(--accent-glow); transform: translateY(-1px); }
+        .alert { padding: 12px 16px; border-radius: 8px; margin-bottom: 1.5rem; }
+        .alert-error { background: rgba(255,82,82,0.1); border: 1px solid var(--red); color: var(--red); }
+        .stores-hint {
+            display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;
+        }
+        .stores-hint span {
+            padding: 4px 10px; border-radius: 20px; font-size: 0.75rem;
+            background: rgba(108,92,231,0.1); color: var(--accent);
+        }
+        @media (max-width: 768px) { nav { padding: 0 1rem; } .container { padding: 1rem; } }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/" class="logo">⚡ Price<span>Pulse</span></a>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card">
+            <h1>Add Product to Track</h1>
+            <p class="subtitle">Paste any product URL and we'll start monitoring its price automatically.</p>
+
+            {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+            {% endif %}
+
+            <form method="POST">
+                <div class="form-group">
+                    <label for="url">Product URL *</label>
+                    <input type="url" id="url" name="url" placeholder="https://www.amazon.fr/dp/B0EXAMPLE" required autofocus>
+                </div>
+                <div class="stores-hint">
+                    <span>Amazon</span><span>Fnac</span><span>Darty</span>
+                    <span>eBay</span><span>Cdiscount</span><span>Boulanger</span>
+                    <span>AliExpress</span><span>LDLC</span><span>& more</span>
+                </div>
+                <br>
+                <button type="submit" class="btn btn-primary">🔍 Find & Track Price</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
